@@ -1,7 +1,5 @@
-/* Encoder Library - Basic Example
- * http://www.pjrc.com/teensy/td_libs_Encoder.html
- *
- * This example code is in the public domain.
+/* 
+ * Bluetooth Encoder as Mousewheel example.
  */
 
 #include <Encoder.h>
