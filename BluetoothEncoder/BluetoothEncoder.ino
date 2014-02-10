@@ -58,7 +58,7 @@ void loop() {
       diff /= 2;
     }
     oldPosition = newPosition;
-    sendMouseReport(0, 0, 0, diff);
+    sendMouseReport(val, 0, 0, diff);
   }
   delay(6);
 }
