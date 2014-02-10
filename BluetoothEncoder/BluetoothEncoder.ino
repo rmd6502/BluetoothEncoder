@@ -1,5 +1,6 @@
 /* 
  * Bluetooth Encoder as Mousewheel example.
+ * Copyright (c) 2014 Robert M Diamond
  */
 
 #include <Encoder.h>
