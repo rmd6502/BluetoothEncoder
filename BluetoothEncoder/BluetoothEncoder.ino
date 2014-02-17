@@ -3,6 +3,8 @@
  * Copyright (c) 2014 Robert M Diamond
  */
 
+#include <avr/power.h>
+#define ENCODER_USE_INTERRUPTS
 #include <Encoder.h>
 #include <SoftwareSerial.h>
 
@@ -10,7 +12,7 @@
 //   Best Performance: both pins have interrupt capability
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
-Encoder myEnc(0,2);
+Encoder myEnc(2,0);
 SoftwareSerial mySerial(4,1);
 
 static const int button = 3;
@@ -28,6 +30,9 @@ struct MouseReport {
 };
 
 void setup() {
+#if (F_CPU == 16000000)
+  clock_prescale_set(clock_div_1);
+#endif
   mySerial.begin(9600);
   pinMode(button, INPUT_PULLUP);
 }
@@ -36,16 +41,12 @@ long oldPosition  = -999;
 #define DEBOUNCE 20
 
 void loop() {
-  static int val = 0;
+  static int val = 1;
   static unsigned long lastClick = 0;
   if (millis() - lastClick > DEBOUNCE) {
     int newbutton = digitalRead(button);
     if (newbutton != val) {
-      if (newbutton == LOW) {
-        sendMouseReport(1, 0, 0, 0);
-      } else {
-        sendMouseReport(0, 0, 0, 0);
-      }
+      sendMouseReport(1-newbutton, 0, 0, 0);
       lastClick = millis();
       val = newbutton;
     }
@@ -54,11 +55,8 @@ void loop() {
   long newPosition = myEnc.read();
   if (newPosition != oldPosition) {
     long diff = oldPosition - newPosition;
-    if (diff > 1) {
-      diff /= 2;
-    }
     oldPosition = newPosition;
-    sendMouseReport(val, 0, 0, diff);
+    sendMouseReport(1-val, 0, 0, diff);
   }
   delay(6);
 }
